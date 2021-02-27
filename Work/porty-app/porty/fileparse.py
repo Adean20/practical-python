@@ -5,6 +5,9 @@ Practical Python coursework
 #
 # Exercise 3.3
 import csv
+import logging
+
+log = logging.getLogger(__name__)
 
 def parse_csv(lines, select=None, types=None,
 has_headers=True, delimiter=',', silence_errors=False):
@@ -40,8 +43,8 @@ has_headers=True, delimiter=',', silence_errors=False):
                 row = [func(val) for func, val in zip(types, row)]
             except ValueError as err:
                 if not silence_errors:
-                    print(f"ValueError Line {num}: {row}")
-                    print(f"{err}")
+                    log.warning(f"ValueError Line {num}: {row}")
+                    log.debug("Row %d: Reason %s", num, err)
                 continue
 
         #make the dictionary

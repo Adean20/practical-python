@@ -1,10 +1,29 @@
 
+from . import fileparse
+from . import stock
+
 class Portfolio:
     """
     Class to hold instances of Stock classes
     """
-    def __init__(self, holdings):
-        self._holdings = holdings
+    def __init__(self):
+        self._holdings = []
+
+    @classmethod
+    def from_csv(cls, lines, **opts):
+        self = cls()
+        portdicts = fileparse.parse_csv(lines, select=['name', 'shares', 'price'],
+        types=[str,int,float], **opts)
+
+        for d in portdicts:
+            self.append(stock.Stock(**d))
+
+        return self
+
+    def append(self, holding):
+            if not isinstance(holding, stock.Stock):
+                raise TypeError("Expected a Stock instance")
+            self._holdings.append(holding)
 
     def __iter__(self):
         return self._holdings.__iter__()
@@ -18,6 +37,7 @@ class Portfolio:
     def __contains__(self, name):
         return any(stock.name == name for stock in self._holdings)
 
+    
     @property
     def total_cost(self):
         """

@@ -1,7 +1,7 @@
 """
 Practical Python Coursework
 """
-from typedproperty import typedproperty
+from .typedproperty import String, Integer, Float
 
 class Stock:
     """

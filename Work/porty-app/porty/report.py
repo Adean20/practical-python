@@ -7,10 +7,11 @@ Practical Python Coursework
 # Exercise 2.4
 
 import sys
-import fileparse
-import tableformat
-from stock import Stock
-from portfolio import Portfolio
+import logging
+from . import fileparse
+from . import tableformat
+from .stock import Stock
+from .portfolio import Portfolio
 
 def read_portfolio(filename, **opts):
     """
@@ -18,12 +19,7 @@ def read_portfolio(filename, **opts):
     Returns a portfolio object
     """
     with open(filename) as file:
-        portfolio_dict = fileparse.parse_csv(file, select=['name', 
-        'shares', 'price'], types=[str, int, float], **opts)
-
-        portfolio = [Stock(**holding) for holding in portfolio_dict]
-
-        return Portfolio(portfolio)
+        return Portfolio.from_csv(file, **opts)
 
 
 def read_prices(filename):
@@ -82,13 +78,19 @@ def main(args):
     """
     Generate and print report
     """
+    logging.basicConfig(
+        filename='app.log',
+        filemode='w',
+        level=logging.WARNING
+    )
     portfolio_file = args[1]
     price_file = args[2]
-    portfolio_report(portfolio_file, price_file)
+    fmt = args[3]
+    portfolio_report(portfolio_file, price_file, fmt)
 
 if __name__ == "__main__":
 
-    if len(sys.argv) != 3:
-        raise SystemExit(f'Usage: {sys.argv[0]} portfolio_file price_file')
+    if len(sys.argv) != 4:
+        raise SystemExit(f'Usage: {sys.argv[0]} portfolio_file price_file fmt')
 
     main(sys.argv)
